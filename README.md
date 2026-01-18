@@ -1,6 +1,6 @@
 # Superheroes Management System
 
-A professional Full-Stack application for managing superheroes, built with modern web technologies and a focus on scalability and clean architecture.
+A Full-Stack application for managing superheroes, built with modern web technologies and a focus on scalability and clean architecture.
 
 ## 🚀 Quick Start
 
@@ -69,7 +69,3 @@ All pages are refactored into modular, atomic components (e.g., `HeroActionHeade
 3. **Connectivity**: The application assumes the backend is running on port `3001` and the frontend on port `3000` by default.
 4. **Environment**: It is assumed that the user has Node.js and Docker installed for standard local development.
 
----
-
-## 📸 Screenshots & Logs
-Detailed walkthroughs and task logs can be found in the `.gemini/antigravity/brain/` directory.
