@@ -52,7 +52,6 @@ All pages are refactored into modular, atomic components (e.g., `HeroActionHeade
 ### Async Middleware & Interceptors
 - **Axios Interceptors**: Global request/response middleware for centralized error handling and automated Toast notifications.
 - **NestJS Interceptors**:
-    - `LoggingInterceptor`: Performance tracking and request logging.
     - `TransformInterceptor`: Standardizes all API responses into a unified `ApiResponse<T>` format.
     - `HttpExceptionFilter`: Global exception mapping for consistent error responses.
 
