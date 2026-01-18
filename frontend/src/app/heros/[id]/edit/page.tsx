@@ -1,6 +1,4 @@
 'use client';
-
-import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Typography, Container, Box, IconButton, CircularProgress } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';

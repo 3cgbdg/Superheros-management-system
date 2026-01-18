@@ -38,19 +38,33 @@ let HeroService = class HeroService {
             },
         });
     }
-    async findAll() {
-        return this.prisma.hero.findMany({
-            include: {
-                superpowers: true,
-                images: true,
-            },
-        });
+    async findAll(page, limit) {
+        const skip = (page - 1) * limit;
+        const [data, total] = await this.prisma.$transaction([
+            this.prisma.hero.findMany({
+                include: {
+                    superpowers: true,
+                    images: true,
+                },
+                skip,
+                take: limit,
+            }),
+            this.prisma.hero.count()
+        ]);
+        return { data, total };
     }
-    async findAllSuperpowers() {
+    async findAllSuperpowers(search) {
         const superpowers = await this.prisma.superpower.findMany({
+            where: search ? {
+                superpower: {
+                    contains: search,
+                    mode: 'insensitive',
+                },
+            } : {},
             select: {
                 superpower: true,
             },
+            take: 10,
         });
         return superpowers.map(s => s.superpower);
     }

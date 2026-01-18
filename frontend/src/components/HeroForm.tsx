@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { AxiosError } from 'axios';
-import { useForm, useFieldArray } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
     Button,
@@ -49,13 +49,6 @@ export default function HeroForm({ initialData, isEdit }: HeroFormProps) {
         },
     });
 
-    const { data: suggestionsData } = useQuery({
-        queryKey: ['superpowers'],
-        queryFn: () => herosService.getSuperpowers(),
-    });
-
-    const suggestions = suggestionsData?.data || [];
-
     const mutation = useMutation({
         mutationFn: (formData: HeroFormData) => {
             const data = {
@@ -68,7 +61,7 @@ export default function HeroForm({ initialData, isEdit }: HeroFormProps) {
             }
             return herosService.createHero(data as any);
         },
-        onSuccess: (response) => {
+        onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['heros'] });
             if (isEdit) {
                 queryClient.invalidateQueries({ queryKey: ['hero', initialData?.id] });
@@ -97,7 +90,6 @@ export default function HeroForm({ initialData, isEdit }: HeroFormProps) {
             <HeroFormSuperpowers
                 control={control}
                 errors={errors}
-                suggestions={suggestions}
             />
 
             <HeroFormImages control={control} errors={errors} />

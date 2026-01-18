@@ -1,17 +1,11 @@
 'use client';
-
-import React from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
     Button,
     CircularProgress,
-    IconButton
 } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
 import herosService from '@/services/herosService';
-import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import HeroActionHeader from '@/components/HeroActionHeader';
 import HeroInfoSection from '@/components/HeroInfoSection';

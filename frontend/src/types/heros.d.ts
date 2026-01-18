@@ -1,11 +1,15 @@
 
-
 export type ApiResponse<T> = {
   success: boolean;
   status?: string | null;
   data?: T;
   message?: string;
   errors?: string[];
+};
+
+export type PaginatedResponse<T> = {
+  data: T[];
+  total: number;
 };
 
 export interface IHero {

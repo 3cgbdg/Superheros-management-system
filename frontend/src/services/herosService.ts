@@ -1,12 +1,12 @@
-import { ApiResponse, IHero } from "@/types/heros";
+import { ApiResponse, IHero, PaginatedResponse } from "@/types/heros";
 import { api } from "./axiosInstance";
 
 
 
 class HerosService {
 
-    async getHeros(): Promise<ApiResponse<IHero[]>> {
-        const response = await api.get("/heros");
+    async getHeros(page: number, limit: number): Promise<ApiResponse<PaginatedResponse<IHero>>> {
+        const response = await api.get("/heros", { params: { page, limit } });
         return response.data;
     }
 
@@ -14,9 +14,6 @@ class HerosService {
         const response = await api.get(`/heros/${id}`);
         return response.data;
     }
-
-
-
 
     async createHero(hero: Partial<IHero>): Promise<ApiResponse<IHero>> {
         const response = await api.post("/heros", hero);
@@ -33,8 +30,8 @@ class HerosService {
         return res.data;
     }
 
-    async getSuperpowers(): Promise<ApiResponse<string[]>> {
-        const response = await api.get("/heros/superpowers");
+    async getSuperpowers(search?: string): Promise<ApiResponse<string[]>> {
+        const response = await api.get("/heros/superpowers", { params: { search } });
         return response.data;
     }
 }

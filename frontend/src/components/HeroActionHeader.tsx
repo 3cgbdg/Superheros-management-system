@@ -25,7 +25,7 @@ export default function HeroActionHeader({ id, onDelete, isDeleting }: HeroActio
             <h1 className="text-3xl font-bold text-gray-800">Hero Details</h1>
             <div className="flex-grow" />
             <div className="flex gap-2">
-                <Link href={`/heros/${id}/edit`} passHref legacyBehavior>
+                <Link href={`/heros/${id}/edit`} passHref >
                     <Button variant="outlined" color="primary" startIcon={<EditIcon />} className="normal-case">
                         Edit
                     </Button>

@@ -17,6 +17,7 @@ const common_1 = require("@nestjs/common");
 const hero_service_1 = require("./hero.service");
 const create_hero_dto_1 = require("./dto/create-hero.dto");
 const update_hero_dto_1 = require("./dto/update-hero.dto");
+const find_all_dto_1 = require("./dto/find-all.dto");
 let HeroController = class HeroController {
     heroService;
     constructor(heroService) {
@@ -25,11 +26,11 @@ let HeroController = class HeroController {
     create(createHeroDto) {
         return this.heroService.create(createHeroDto);
     }
-    findAll() {
-        return this.heroService.findAll();
+    findAll(query) {
+        return this.heroService.findAll(query.page, query.limit);
     }
-    findAllSuperpowers() {
-        return this.heroService.findAllSuperpowers();
+    findAllSuperpowers(search) {
+        return this.heroService.findAllSuperpowers(search);
     }
     findOne(id) {
         return this.heroService.findOne(id);
@@ -47,26 +48,28 @@ __decorate([
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [create_hero_dto_1.CreateHeroDto]),
-    __metadata("design:returntype", void 0)
+    __metadata("design:returntype", Promise)
 ], HeroController.prototype, "create", null);
 __decorate([
     (0, common_1.Get)(),
+    __param(0, (0, common_1.Query)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", void 0)
+    __metadata("design:paramtypes", [find_all_dto_1.FindAllDto]),
+    __metadata("design:returntype", Promise)
 ], HeroController.prototype, "findAll", null);
 __decorate([
     (0, common_1.Get)('superpowers'),
+    __param(0, (0, common_1.Query)('search')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", void 0)
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
 ], HeroController.prototype, "findAllSuperpowers", null);
 __decorate([
     (0, common_1.Get)(':id'),
     __param(0, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
-    __metadata("design:returntype", void 0)
+    __metadata("design:returntype", Promise)
 ], HeroController.prototype, "findOne", null);
 __decorate([
     (0, common_1.Patch)(':id'),
@@ -74,14 +77,14 @@ __decorate([
     __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String, update_hero_dto_1.UpdateHeroDto]),
-    __metadata("design:returntype", void 0)
+    __metadata("design:returntype", Promise)
 ], HeroController.prototype, "update", null);
 __decorate([
     (0, common_1.Delete)(':id'),
     __param(0, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
-    __metadata("design:returntype", void 0)
+    __metadata("design:returntype", Promise)
 ], HeroController.prototype, "remove", null);
 exports.HeroController = HeroController = __decorate([
     (0, common_1.Controller)('heros'),

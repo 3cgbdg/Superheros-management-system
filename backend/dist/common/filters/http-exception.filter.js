@@ -12,29 +12,15 @@ let HttpExceptionFilter = class HttpExceptionFilter {
     catch(exception, host) {
         const ctx = host.switchToHttp();
         const response = ctx.getResponse();
-        const request = ctx.getRequest();
+        const request = ctx.getResponse();
         const status = exception.getStatus();
         const exceptionResponse = exception.getResponse();
-        let message = 'An error occurred';
-        let errors = [];
-        if (typeof exceptionResponse === 'object' && exceptionResponse !== null) {
-            const responseObj = exceptionResponse;
-            message = responseObj.message || message;
-            errors = Array.isArray(responseObj.message)
-                ? responseObj.message
-                : responseObj.message
-                    ? [responseObj.message]
-                    : [];
-        }
-        const errorResponse = {
-            success: false,
+        response.status(status).json({
             statusCode: status,
-            message: Array.isArray(message) ? message[0] : message,
-            errors: errors,
-            timestamp: new Date().toISOString(),
             path: request.url,
-        };
-        response.status(status).json(errorResponse);
+            error: exceptionResponse,
+            timestamp: new Date().toISOString()
+        });
     }
 };
 exports.HttpExceptionFilter = HttpExceptionFilter;

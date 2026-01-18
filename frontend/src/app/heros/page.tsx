@@ -1,6 +1,5 @@
 'use client';
 
-import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import {
     Button,
@@ -13,17 +12,23 @@ import Link from 'next/link';
 import HeroCard from '@/components/HeroCard';
 import { toast } from 'react-toastify';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { ITEMS_PER_PAGE } from '@/constants';
+import { useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 
-const ITEMS_PER_PAGE = 5;
 
-export default function HerosListPage() {
-    const [page, setPage] = useState(1);
+import { Suspense } from 'react';
+import { IHero } from '@/types/heros';
 
+function HerosListContent() {
+    const searchParams = useSearchParams()
+    const page = Number(searchParams.get('page')) || 1;
+    const router = useRouter();
     const queryClient = useQueryClient();
 
     const { data, isLoading, error } = useQuery({
         queryKey: ['heros', page],
-        queryFn: () => herosService.getHeros(),
+        queryFn: () => herosService.getHeros(page, ITEMS_PER_PAGE),
     });
 
     const deleteHeroMutation = useMutation({
@@ -34,12 +39,11 @@ export default function HerosListPage() {
         },
     });
 
-    const heros = data?.data || [];
-    const totalItems = heros.length;
-    const paginatedHeros = heros.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE);
+    const heros = data?.data?.data || [];
+    const totalItems = data?.data?.total || 0;
 
     const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
-        setPage(value);
+        router.push(`/heros?page=${value}`);
     };
 
     if (isLoading) {
@@ -77,7 +81,7 @@ export default function HerosListPage() {
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 mb-12">
-                {paginatedHeros.map((hero) => (
+                {heros.map((hero: IHero) => (
                     <HeroCard key={hero.id} hero={hero} onDelete={() => deleteHeroMutation.mutate(hero.id)} />
                 ))}
             </div>
@@ -100,6 +104,19 @@ export default function HerosListPage() {
                 </div>
             )}
         </div>
+    );
+}
+
+// general loading before component is loaded
+export default function HerosListPage() {
+    return (
+        <Suspense fallback={
+            <div className="flex justify-center items-center min-h-screen">
+                <CircularProgress />
+            </div>
+        }>
+            <HerosListContent />
+        </Suspense>
     );
 }
 

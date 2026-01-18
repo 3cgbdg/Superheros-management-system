@@ -20,6 +20,12 @@ let TransformInterceptor = class TransformInterceptor {
         if (Array.isArray(data)) {
             return data.map((item) => this.transformHero(item));
         }
+        if (data && typeof data === 'object' && Array.isArray(data.data) && typeof data.total === 'number') {
+            return {
+                ...data,
+                data: data.data.map((item) => this.transformHero(item)),
+            };
+        }
         return this.transformHero(data);
     }
     transformHero(hero) {

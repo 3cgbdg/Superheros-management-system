@@ -2,12 +2,13 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateHeroDto } from './dto/create-hero.dto';
 import { UpdateHeroDto } from './dto/update-hero.dto';
 import { PrismaService } from '../prisma/prisma.service';
+import { IPaginatedResponse } from '../types/types';
 
 @Injectable()
 export class HeroService {
   constructor(private prisma: PrismaService) { }
 
-  async create(createHeroDto: CreateHeroDto) {
+  async create(createHeroDto: CreateHeroDto): Promise<any> {
     const { superpowers, images, ...heroData } = createHeroDto;
 
     return this.prisma.hero.create({
@@ -30,25 +31,41 @@ export class HeroService {
     });
   }
 
-  async findAll() {
-    return this.prisma.hero.findMany({
-      include: {
-        superpowers: true,
-        images: true,
-      },
-    });
+  async findAll(page: number, limit: number): Promise<IPaginatedResponse<any>> {
+    const skip = (page - 1) * limit;
+
+    const [data, total] = await this.prisma.$transaction([
+      this.prisma.hero.findMany({
+        include: {
+          superpowers: true,
+          images: true,
+        },
+        skip,
+        take: limit,
+      }),
+      this.prisma.hero.count()
+    ]);
+
+    return { data, total };
   }
 
-  async findAllSuperpowers() {
+  async findAllSuperpowers(search?: string): Promise<string[]> {
     const superpowers = await this.prisma.superpower.findMany({
+      where: search ? {
+        superpower: {
+          contains: search,
+          mode: 'insensitive',
+        },
+      } : {},
       select: {
         superpower: true,
       },
+      take: 10, 
     });
     return superpowers.map(s => s.superpower);
   }
 
-  async findOne(id: string) {
+  async findOne(id: string): Promise<any> {
     const hero = await this.prisma.hero.findUnique({
       where: { id },
       include: {
@@ -62,7 +79,7 @@ export class HeroService {
     return hero;
   }
 
-  async update(id: string, updateHeroDto: UpdateHeroDto) {
+  async update(id: string, updateHeroDto: UpdateHeroDto): Promise<any> {
     const { superpowers, images, ...heroData } = updateHeroDto;
 
     // Check if hero exists
@@ -74,7 +91,7 @@ export class HeroService {
         ...heroData,
         ...(superpowers && {
           superpowers: {
-            set: [], // Disconnect old ones
+            set: [],
             connectOrCreate: superpowers.map((s) => ({
               where: { superpower: s },
               create: { superpower: s },
@@ -95,7 +112,7 @@ export class HeroService {
     });
   }
 
-  async remove(id: string) {
+  async remove(id: string): Promise<any> {
     await this.findOne(id);
 
     await this.prisma.image.deleteMany({ where: { heroId: id } });

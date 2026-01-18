@@ -1,23 +1,33 @@
 'use client';
 
-import React from 'react';
+import { useState } from 'react';
 import { Control, Controller, FieldErrors, useFieldArray } from 'react-hook-form';
 import { TextField, Button, IconButton, Autocomplete } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
 import { HeroFormData } from '@/schemas/heroSchema';
+import { useQuery } from '@tanstack/react-query';
+import herosService from '@/services/herosService';
 
 interface HeroFormSuperpowersProps {
     control: Control<HeroFormData>;
     errors: FieldErrors<HeroFormData>;
-    suggestions: string[];
 }
 
-export default function HeroFormSuperpowers({ control, errors, suggestions }: HeroFormSuperpowersProps) {
+export default function HeroFormSuperpowers({ control, errors }: HeroFormSuperpowersProps) {
+    const [searchTerm, setSearchTerm] = useState('');
     const { fields, append, remove } = useFieldArray({
         control,
         name: "superpowers",
     });
+
+    const { data: suggestionsData } = useQuery({
+        queryKey: ['superpowers', searchTerm],
+        queryFn: () => herosService.getSuperpowers(searchTerm),
+        enabled: searchTerm.length >= 2,
+    });
+
+    const suggestions = suggestionsData?.data || [];
 
     return (
         <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-100 space-y-4">
@@ -31,9 +41,12 @@ export default function HeroFormSuperpowers({ control, errors, suggestions }: He
                             render={({ field: { value, onChange } }) => (
                                 <Autocomplete
                                     freeSolo
-                                    options={value.length >= 2 ? suggestions.filter(s => s.toLowerCase().startsWith(value.toLowerCase())) : []}
+                                    options={suggestions}
                                     value={value}
-                                    onInputChange={(_, newValue) => onChange(newValue)}
+                                    onInputChange={(_, newValue) => {
+                                        onChange(newValue);
+                                        setSearchTerm(newValue);
+                                    }}
                                     fullWidth
                                     renderInput={(params) => (
                                         <TextField

@@ -6,18 +6,14 @@ import {
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-
-export interface Response<T> {
-    success: boolean;
-    data: T;
-}
+import { ISuccessResponse } from '../../types/types';
 
 @Injectable()
-export class TransformInterceptor<T> implements NestInterceptor<T, Response<T>> {
+export class TransformInterceptor<T> implements NestInterceptor<T, ISuccessResponse<T>> {
     intercept(
         context: ExecutionContext,
         next: CallHandler,
-    ): Observable<Response<T>> {
+    ): Observable<ISuccessResponse<T>> {
         return next.handle().pipe(
             map((data) => ({
                 success: true,
@@ -30,13 +26,18 @@ export class TransformInterceptor<T> implements NestInterceptor<T, Response<T>> 
         if (Array.isArray(data)) {
             return data.map((item) => this.transformHero(item));
         }
+        if (data && typeof data === 'object' && Array.isArray(data.data) && typeof data.total === 'number') {
+            return {
+                ...data,
+                data: data.data.map((item: any) => this.transformHero(item)),
+            };
+        }
         return this.transformHero(data);
     }
 
     private transformHero(hero: any): any {
         if (!hero || typeof hero !== 'object') return hero;
 
-        // Check if it's a Hero object with nested Prisma relations
         if (hero.superpowers || hero.images) {
             const transformed = { ...hero };
 

@@ -7,7 +7,7 @@ export default function Home() {
   const router = useRouter();
   // not using url route - "/" so redirect to /events
   useEffect(() => {
-    router.push('/heros');
+    router.push('/heros?page=1');
   }, [router]);
 
   return null;
