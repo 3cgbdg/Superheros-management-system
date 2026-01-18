@@ -56,9 +56,11 @@ All pages are refactored into modular, atomic components (e.g., `HeroActionHeade
     - `TransformInterceptor`: Standardizes all API responses into a unified `ApiResponse<T>` format.
     - `HttpExceptionFilter`: Global exception mapping for consistent error responses.
 
-### Intelligent Data Management
+### Intelligent Data Management & Optimization
+- **Backend Pagination**: Efficient server-side pagination using `skip` and `take` at the database level (5 items per page).
+- **Dynamic Superpower Filtering**: Autocomplete suggestions are filtered on the server as the user types (after 2 characters), minimizing network payload.
 - **Image Syncing**: Automatic deletion of "orphaned" images from the database when removed from a hero's profile.
-- **Data Integrity**: Enforced `@unique` constraints on image URLs and case-insensitive uniqueness for superpowers.
+- **Centralized Type Safety**: Unified `types.d.ts` on both frontend and backend for robust development and consistency.
 
 ---
 
@@ -67,5 +69,6 @@ All pages are refactored into modular, atomic components (e.g., `HeroActionHeade
 1. **Mandatory Content**: Every superhero profile must contain at least one image and one superpower to be considered valid.
 2. **URL Uniqueness**: Each image URL is unique to a single hero (cannot be shared across heroes).
 3. **Connectivity**: The application assumes the backend is running on port `3001` and the frontend on port `3000` by default.
-4. **Environment**: It is assumed that the user has Node.js and Docker installed for standard local development.
+4. **Search Behavior**: Superpower suggestions are fetched from the server only after 2 characters are entered to optimize API calls.
+5. **Pagination**: The list view always adheres to exactly 5 items per page as per requirement.
 
